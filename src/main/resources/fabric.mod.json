@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "beastsouls",
+  "version": "${version}",
+  "name": "BeastSouls",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/beastsouls/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.beasts.beastsouls.client.BeastsoulsDataGenerator"
+    ],
+    "client": [
+      "org.beasts.beastsouls.client.BeastsoulsClient"
+    ],
+    "main": [
+      "org.beasts.beastsouls.Beastsouls"
+    ]
+  },
+  "mixins": [
+    "beastsouls.mixins.json",
+    {
+      "config": "beastsouls.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
