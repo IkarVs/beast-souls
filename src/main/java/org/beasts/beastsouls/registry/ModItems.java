@@ -1,4 +1,4 @@
-package org.beasts.beastsouls.item;
+package org.beasts.beastsouls.registry;
 
 
 import net.minecraft.item.Item;

@@ -1,7 +1,7 @@
 package org.beasts.beastsouls;
 
 import net.fabricmc.api.ModInitializer;
-import org.beasts.beastsouls.item.ModItems;
+import org.beasts.beastsouls.registry.ModItems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
