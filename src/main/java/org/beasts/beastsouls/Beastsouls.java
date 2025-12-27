@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 public class Beastsouls implements ModInitializer {
     public static final Logger LOGGER =
             LoggerFactory.getLogger("examplemod");
+    public static final String MOD_ID = "beast_souls";
+
 
     @Override
     public void onInitialize() {
             LOGGER.info("TESSST YAHOOOOOOO");
-        ModItems.register();
+            ModItems.init();
     }
 }
