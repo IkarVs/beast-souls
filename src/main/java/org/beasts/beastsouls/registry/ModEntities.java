@@ -1,6 +1,8 @@
 package org.beasts.beastsouls.registry;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
@@ -8,6 +10,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.beasts.beastsouls.Beastsouls;
 import org.beasts.beastsouls.entity.CubeEntity;
+import org.beasts.beastsouls.entity.RockyEntity;
 
 public class ModEntities{
 
@@ -21,6 +24,13 @@ public class ModEntities{
             Registries.ENTITY_TYPE,
             Identifier.of(Beastsouls.MOD_ID, "cube"),
             EntityType.Builder.create(CubeEntity::new, SpawnGroup.CREATURE).setDimensions(0.75f, 0.75f).build("cube"));
+    public static final EntityType<RockyEntity> ROCKY = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier("beastsouls", "rocky"),
+            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, RockyEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)) // taille du mob
+                    .build()
+    );
 
     public static void init() {
         FabricDefaultAttributeRegistry.register(CUBE, CubeEntity.createMobAttributes());
