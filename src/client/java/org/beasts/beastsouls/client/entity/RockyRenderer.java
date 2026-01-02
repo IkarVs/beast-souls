@@ -8,6 +8,8 @@ public class RockyRenderer extends GeoEntityRenderer<RockyEntity> {
 
     public RockyRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new RockyModel());
-        this.shadowRadius = 0.7f; // ombre du mob
+        this.shadowRadius = 1.7f; // ombre du mob
+        this.scaleHeight =2.2f;
+        this.scaleWidth=2.2f;
     }
 }

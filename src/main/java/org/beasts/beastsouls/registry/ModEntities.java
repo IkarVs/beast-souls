@@ -28,12 +28,12 @@ public class ModEntities{
             Registries.ENTITY_TYPE,
             new Identifier("beastsouls", "rocky"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, RockyEntity::new)
-                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f)) // taille du mob
+                    .dimensions(EntityDimensions.fixed(2.2f, 4.4f)) // taille du mob
                     .build()
     );
 
     public static void init() {
         FabricDefaultAttributeRegistry.register(CUBE, CubeEntity.createMobAttributes());
-
+        FabricDefaultAttributeRegistry.register(ROCKY, RockyEntity.createRockyAttributes());
     }
 }

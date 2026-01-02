@@ -15,11 +15,13 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RockyEntity extends PathAwareEntity implements GeoEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private boolean attacking = false;
 
     public RockyEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
@@ -67,11 +69,13 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
         boolean success = super.tryAttack(target);
 
         if (success) {
+            this.setAttacking(true);
+
             // dégâts
             target.damage(this.getDamageSources().mobAttack(this),
                     (float) this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
 
-            // petit knock-up comme le golem de fer
+            // knock-up
             target.setVelocity(target.getVelocity().add(0, 0.4, 0));
         }
 
@@ -84,14 +88,38 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 
-        controllers.add(new AnimationController<>(this, "controller", 0, state -> {
+        // Contrôleur de mouvement
+        controllers.add(new AnimationController<>(this, "move_controller", 0, state -> {
 
-            if (state.isMoving()) {
-                return state.setAndContinue(RawAnimation.begin().thenLoop("animation.rocky.walk"));
+            if (this.isAttacking()) {
+                return state.setAndContinue(RawAnimation.begin().thenPlay("attack"));
             }
 
-            return state.setAndContinue(RawAnimation.begin().thenLoop("animation.rocky.idle"));
+            if (state.isMoving()) {
+                return state.setAndContinue(RawAnimation.begin().thenLoop("walk"));
+            }
+
+            return state.setAndContinue(RawAnimation.begin().thenLoop("idle"));
         }));
+
+        // Contrôleur pour reset l’attaque
+        controllers.add(new AnimationController<>(this, "attack_reset", 0, state -> {
+            if (this.isAttacking()) {
+                // Quand l’animation est finie → reset
+                if (state.getController().hasAnimationFinished()) {
+                    this.setAttacking(false);
+                }
+            }
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    public void setAttacking(boolean attacking) {
+        this.attacking = attacking;
+    }
+
+    public boolean isAttacking() {
+        return this.attacking;
     }
 
     @Override
