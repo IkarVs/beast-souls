@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import org.beasts.beastsouls.Beastsouls;
 import org.beasts.beastsouls.client.entity.CubeEntityModel;
 import org.beasts.beastsouls.client.entity.CubeEntityRenderer;
+import org.beasts.beastsouls.client.entity.RockyRenderer;
 import org.beasts.beastsouls.registry.ModEntities;
 
 public class BeastsoulsClient implements ClientModInitializer {
@@ -19,5 +20,9 @@ public class BeastsoulsClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityModelLayerRegistry.registerModelLayer(MODEL_CUBE_LAYER, CubeEntityModel::getTexturedModelData);
         EntityRendererRegistry.register(ModEntities.CUBE, CubeEntityRenderer::new);
+        // avec gecko pas besoin de mettre de layer
+        EntityRendererRegistry.register(ModEntities.ROCKY, RockyRenderer::new);
+
+
     }
 }
