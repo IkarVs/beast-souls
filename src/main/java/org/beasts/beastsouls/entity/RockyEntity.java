@@ -10,6 +10,9 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
+import org.beasts.beastsouls.entity.ai.RockyAttackGoal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
@@ -17,9 +20,9 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RockyEntity extends PathAwareEntity implements GeoEntity {
-
+    public static final Logger LOGGER =
+            LoggerFactory.getLogger("beastsouls");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
     public RockyEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -41,7 +44,7 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
     // -----------------------------
     @Override
     protected void initGoals() {
-        this.goalSelector.add(1, new MeleeAttackGoal(this, 1.0, true));
+        this.goalSelector.add(1, new RockyAttackGoal(this, 1.0, true));
         this.goalSelector.add(2, new WanderAroundGoal(this, 0.6));
         this.goalSelector.add(3, new LookAroundGoal(this));
         this.goalSelector.add(4, new LookAtEntityGoal(this, PlayerEntity.class, 8.0f));
@@ -53,19 +56,17 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
     // -----------------------------
     //      ATTAQUE
     // -----------------------------
+
     @Override
     public boolean tryAttack(Entity target) {
         boolean success = super.tryAttack(target);
 
         if (success) {
-            // 🔥 Déclenche l'animation
-            this.triggerAnim("attack_controller", "attack");
-
+            LOGGER.info("ATTACK DAMAGE");
             target.damage(
                     this.getDamageSources().mobAttack(this),
                     (float) this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)
             );
-
             target.setVelocity(target.getVelocity().add(0, 0.4, 0));
         }
 
