@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +14,7 @@ import net.minecraft.world.World;
 import org.beasts.beastsouls.entity.ai.RockyAttackGoal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
@@ -20,9 +22,16 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RockyEntity extends PathAwareEntity implements GeoEntity {
-    public static final Logger LOGGER =
-            LoggerFactory.getLogger("beastsouls");
+
+    public static final Logger LOGGER = LoggerFactory.getLogger("beastsouls");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+    // -----------------------------
+    //      MORT CUSTOM
+    // -----------------------------
+    private boolean isDying = false;
+    private int deathTicks = 0;
+
     public RockyEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -56,7 +65,6 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
     // -----------------------------
     //      ATTAQUE
     // -----------------------------
-
     @Override
     public boolean tryAttack(Entity target) {
         boolean success = super.tryAttack(target);
@@ -85,6 +93,8 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
                 "movement_controller",
                 0,
                 state -> {
+                    if (this.isDying) return PlayState.STOP;
+
                     if (state.isMoving()) {
                         return state.setAndContinue(
                                 RawAnimation.begin().thenLoop("walk")
@@ -106,7 +116,65 @@ public class RockyEntity extends PathAwareEntity implements GeoEntity {
                 "attack",
                 RawAnimation.begin().thenPlay("attack")
         ));
+
+        // 💀 Mort (one-shot)
+        controllers.add(new AnimationController<>(
+                this,
+                "death_controller",
+                0,
+                state -> PlayState.STOP
+        ).triggerableAnim(
+                "death",
+                RawAnimation.begin().thenPlay("death")
+        ));
     }
+
+    // -----------------------------
+    //      MORT CUSTOM
+    // -----------------------------
+    @Override
+    public void onDeath(DamageSource source) {
+        if (!this.isDying) {
+            this.isDying = true;
+            this.deathTicks = 0;
+            LOGGER.info("ON DEATH");
+
+            // Empêche la physique vanilla
+            this.setNoGravity(true);
+            this.setVelocity(0, 0, 0);
+            this.velocityDirty = true; // garantit qu'aucun mouvement ne s'applique
+
+            // Lance l’animation de mort
+            this.triggerAnim("death_controller", "death");
+
+            // On garde l'entité en vie visuellement mais invincible
+            this.setHealth(1.0F);
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.isDying) {
+            this.deathTicks++;
+
+            // Bloque tous les mouvements
+            this.setVelocity(0, 0, 0);
+            this.velocityDirty = true;
+
+            // Optionnel : force l’orientation pour éviter la chute
+            this.setPitch(0);
+            this.prevPitch = 0;
+
+            // Supprime l’entité après 1.5s (30 ticks)
+            if (this.deathTicks >= 30) {
+                LOGGER.info("REMOVED");
+                this.remove(RemovalReason.KILLED);
+            }
+        }
+    }
+
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
