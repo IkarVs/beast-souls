@@ -1,19 +1,15 @@
 package org.beasts.beastsouls.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 import org.beasts.beastsouls.Beastsouls;
 import org.beasts.beastsouls.client.entity.CubeEntityModel;
 import org.beasts.beastsouls.client.entity.CubeEntityRenderer;
 import org.beasts.beastsouls.client.entity.RockyRenderer;
-import org.beasts.beastsouls.client.item.AnimatedItemRenderer;
 import org.beasts.beastsouls.registry.ModEntities;
-import org.beasts.beastsouls.registry.ModItems;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 public class BeastsoulsClient implements ClientModInitializer {
 

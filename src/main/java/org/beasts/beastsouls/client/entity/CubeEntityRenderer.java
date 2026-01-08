@@ -4,8 +4,8 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.util.Identifier;
 import org.beasts.beastsouls.Beastsouls;
-import org.beasts.beastsouls.entity.CubeEntity;
 import org.beasts.beastsouls.client.BeastsoulsClient;
+import org.beasts.beastsouls.entity.CubeEntity;
 
 
 /*
